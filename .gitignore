@@ -1,0 +1,6 @@
+.vs/
+bin/
+include/
+lib/
+x64/
+GeneratedFiles/
