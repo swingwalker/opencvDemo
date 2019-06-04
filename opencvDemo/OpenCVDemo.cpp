@@ -44,11 +44,15 @@ void OpenCVDemo::initDlg()
 	// Éú³É»Ò¶ÈÍ¼
 	connect(ui.pushButton_Gray, SIGNAL(clicked()), this, SLOT(createGray()));
 	connect(ui.pushButton_Canny, SIGNAL(clicked()), this, SLOT(creatCanny()));
+	connect(ui.pushButton_More, SIGNAL(clicked()), this, SLOT(moreimg()));
+
+	statuLabel = new QLabel;
+	ui.statusBar->addWidget(statuLabel);
 }
 
 void OpenCVDemo::getImgByFileName()
 {
-	_strImgPath = QFileDialog::getOpenFileName(this, QStringLiteral("Ñ¡ÔñÍ¼Æ¬"), "", "Images (*.png *.xpm *.jpg)");
+	_strImgPath = QFileDialog::getOpenFileName(this, QStringLiteral("Ñ¡ÔñÍ¼Æ¬"), "", "Images (*.png *.xpm *.jpg *.bmp)");
 	ui.lineEdit_ImgName->setText(_strImgPath);
 	_cvImg = cv::imread(_strImgPath.toStdString(), -1);
 	showImg(_cvImg, _imgFormat, ui.graphicsView);
@@ -101,6 +105,7 @@ QGraphicsPixmapItem * OpenCVDemo::showImg(cv::Mat cvImg, QImage::Format eFormat,
 
 void OpenCVDemo::createPyrDown(int iPyr)
 {
+	clock_t ts = clock();
 	cv::Mat cvPyrImg = _cvImg;
 	for (size_t i = 0; i < iPyr; i++)
 	{
@@ -108,6 +113,9 @@ void OpenCVDemo::createPyrDown(int iPyr)
 	}
 
 	showImg(cvPyrImg, _imgFormat, ui.graphicsView_2);
+	clock_t te = clock();
+	
+	statuLabel->setText(QString("%1ms").arg(te-ts));
 }
 
 void OpenCVDemo::createGray()
@@ -125,4 +133,21 @@ void OpenCVDemo::creatCanny()
 	cv::Canny(cvGrayImg, cvCannyImg, 10, 200, 3, true);
 	showImg(cvGrayImg, _grayFormat,ui.graphicsView_3);
 	showImg(cvCannyImg, _cannyFormat, ui.graphicsView_4);
+}
+
+void OpenCVDemo::moreimg()
+{
+	_strImgPath = QFileDialog::getOpenFileName(this, QStringLiteral("Ñ¡ÔñÍ¼Æ¬"), "", "Images (*.png *.xpm *.jpg *.bmp)");
+	clock_t ts = clock();
+	_cvImg = cv::imread(_strImgPath.toStdString(), -1);
+	cv::Mat cvPyrImg = _cvImg;
+	for (size_t i = 0; i < 3; i++)
+	{
+		cv::pyrDown(cvPyrImg, cvPyrImg);
+	}
+
+	showImg(cvPyrImg, _imgFormat, ui.graphicsView_2);
+	cv::imwrite("C:\\Users\\Administrator\\Desktop\\out.bmp", cvPyrImg);
+	clock_t te = clock();
+	statuLabel->setText(QString("%1ms").arg(te - ts));
 }

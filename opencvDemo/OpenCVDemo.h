@@ -15,6 +15,7 @@ public:
 
 private:
 	Ui::OpenCVDemoClass ui;
+	QLabel * statuLabel;
 
 	QString _strImgPath;
 	cv::Mat _cvImg;
@@ -33,4 +34,5 @@ private slots:
 	void createGray();
 
 	void creatCanny();
+	void moreimg();
 };
